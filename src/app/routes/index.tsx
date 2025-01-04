@@ -9,6 +9,8 @@ import CartPage from '../../pages/CartPage';
 import CheckoutPage from '../../pages/CheckoutPage';
 import MainLayout from '../layout/MainLayout';
 import { productLoader } from '../../utils/productLoader';
+import SuccessPage from '../../pages/SuccessPage';
+import CancelPage from '../../pages/CancelPage';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -21,6 +23,8 @@ const router = createBrowserRouter(
       />
       <Route path="/cart" element={<CartPage />} />
       <Route path="/checkout" element={<CheckoutPage />} />
+      <Route path="/success" element={<SuccessPage />} />
+      <Route path="/cancel" element={<CancelPage />} />
     </Route>
   )
 );

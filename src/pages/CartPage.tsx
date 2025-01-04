@@ -1,7 +1,9 @@
 import { useCart } from '../context/CartContext';
+import { useNavigate } from 'react-router-dom';
 
 const CartPage = () => {
   const { cart, removeProductFromCart, updateCartQuantity } = useCart();
+  const navigate = useNavigate(); // React Router navigation hook
 
   const handleRemove = (id) => {
     removeProductFromCart(id);
@@ -9,6 +11,11 @@ const CartPage = () => {
 
   const handleQuantityChange = (id, quantity) => {
     updateCartQuantity(id, quantity);
+  };
+
+  const handleCheckout = () => {
+    // Navigate to checkout page and pass cart data as state
+    navigate('/checkout', { state: { cart } });
   };
 
   if (cart.length === 0) {
@@ -67,6 +74,14 @@ const CartPage = () => {
                 .reduce((total, item) => total + item.price * item.quantity, 0)
                 .toFixed(2)}
             </h2>
+          </div>
+          <div className="checkout-button mt-6">
+            <button
+              onClick={handleCheckout}
+              className="bg-green-500 text-white py-2 px-6 rounded"
+            >
+              Go to Checkout
+            </button>
           </div>
         </div>
       </div>
