@@ -6,7 +6,11 @@ const override = {
   borderColor: '#000',
 };
 
-const Spinner = ({ loading }) => {
+interface SpinnerLoading {
+  loading: boolean;
+}
+
+const Spinner = ({ loading }: SpinnerLoading) => {
   return <ClipLoader color="#000" loading={loading} cssOverride={override} />;
 };
 

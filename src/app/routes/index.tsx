@@ -7,7 +7,7 @@ import HomePage from '../../pages/HomePage';
 import ProductDetailPage from '../../pages/ProductDetailPage';
 import CartPage from '../../pages/CartPage';
 import CheckoutPage from '../../pages/CheckoutPage';
-import MainLayout from '../layout/MainLayout';
+import MainLayout from '../../layout/MainLayout';
 import { productLoader } from '../../utils/productLoader';
 import SuccessPage from '../../pages/SuccessPage';
 import CancelPage from '../../pages/CancelPage';

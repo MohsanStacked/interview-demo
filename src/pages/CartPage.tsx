@@ -1,16 +1,24 @@
 import { useCart } from '../context/CartContext';
 import { useNavigate } from 'react-router-dom';
 
+interface CartItem {
+  id: number;
+  title: string;
+  price: number;
+  quantity: number;
+  image: string;
+}
+
 const CartPage = () => {
   const { cart, removeProductFromCart, updateCartQuantity } = useCart();
   const navigate = useNavigate(); // React Router navigation hook
 
-  const handleRemove = (id) => {
-    removeProductFromCart(id);
+  const handleRemove = (id: number) => {
+    removeProductFromCart(id); // Assuming this function removes based on id
   };
 
-  const handleQuantityChange = (id, quantity) => {
-    updateCartQuantity(id, quantity);
+  const handleQuantityChange = (id: number, quantity: number) => {
+    updateCartQuantity(id, quantity); // Assuming this function updates quantity based on id
   };
 
   const handleCheckout = () => {
@@ -28,7 +36,7 @@ const CartPage = () => {
         <div className="container mx-auto p-4">
           <h1 className="text-3xl font-bold">Your Cart</h1>
           <div className="cart-items">
-            {cart.map((item) => (
+            {cart.map((item: CartItem) => (
               <div
                 key={item.id}
                 className="cart-item flex justify-between items-center p-4"
@@ -56,7 +64,10 @@ const CartPage = () => {
                     value={item.quantity}
                     min="1"
                     onChange={(e) =>
-                      handleQuantityChange(item.id, parseInt(e.target.value))
+                      handleQuantityChange(
+                        item.id,
+                        parseInt(e.target.value, 10)
+                      )
                     }
                     className="w-16 mx-4 text-center"
                   />

@@ -1,0 +1,26 @@
+{
+  "root": [
+    "./src/main.tsx",
+    "./src/app/app.tsx",
+    "./src/app/routes/index.tsx",
+    "./src/components/button.tsx",
+    "./src/components/cartitem.tsx",
+    "./src/components/navbar.tsx",
+    "./src/components/productcard.tsx",
+    "./src/components/spinner.tsx",
+    "./src/context/cartcontext.tsx",
+    "./src/context/cartprovider.tsx",
+    "./src/layout/mainlayout.tsx",
+    "./src/pages/cancelpage.tsx",
+    "./src/pages/cartpage.tsx",
+    "./src/pages/checkoutpage.tsx",
+    "./src/pages/homepage.tsx",
+    "./src/pages/homeproductlist.tsx",
+    "./src/pages/productdetailpage.tsx",
+    "./src/pages/successpage.tsx",
+    "./src/utils/productloader.ts",
+    "./css.d.ts"
+  ],
+  "errors": true,
+  "version": "5.6.3"
+}

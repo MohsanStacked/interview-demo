@@ -1,6 +1,14 @@
 import { NavLink } from 'react-router-dom';
 
-const ProductCard = ({ product }) => {
+interface Product {
+  id: number;
+  title: string;
+  price: number;
+  image: string;
+  description?: string; // Optional field
+}
+
+const ProductCard = ({ product }: { product: Product }) => {
   return (
     <>
       <div className="border rounded-lg shadow-lg p-4 flex flex-col h-full">
