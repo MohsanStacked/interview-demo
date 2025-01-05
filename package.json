@@ -9,7 +9,7 @@
     "lint": "eslint 'src/**/*.{ts,tsx}'",
     "preview": "vite preview",
     "fix": "eslint 'src/**/*.{ts,tsx}' --fix",
-    "server": "node --watch ts-node src/backend/server/server.ts"
+    "server": "node --watch --env-file=.env src/backend/server/server.js"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.5.0",
@@ -17,6 +17,7 @@
     "@stripe/stripe-js": "^5.4.0",
     "axios": "^1.7.9",
     "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

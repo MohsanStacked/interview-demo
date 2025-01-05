@@ -1,11 +1,7 @@
 import { useCart } from '../context/CartContext';
 import { loadStripe } from '@stripe/stripe-js';
 
-console.log(import.meta.env.VITA_APP);
-
-const stripePromise = loadStripe(
-  import.meta.env.VITE_APP_STRIPE_API_PK as string
-);
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_API_PK);
 
 const checkoutPage = () => {
   const { cart } = useCart();

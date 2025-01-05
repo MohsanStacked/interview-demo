@@ -1,8 +1,8 @@
 import Stripe from 'stripe';
+import dotenv from 'dotenv';
+dotenv.config();
 
-const stripe = new Stripe(
-  'sk_test_51QbR7o02i3Jx8geObzMqBpsoHWV0KPSASlw4hTGzjMM5B30kTWrbMZ8da2KO3cMK5uD0PgNGTVkYnEb34H4566H500NqNs2ZlU'
-);
+const stripe = new Stripe(process.env.VITE_STRIPE_API_SK);
 
 const createCheckoutSession = async (req, res) => {
   try {
