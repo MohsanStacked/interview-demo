@@ -1,62 +1,175 @@
+import { useEffect, useState, useRef } from 'react';
+import { AdyenCheckout, Dropin } from '@adyen/adyen-web'; // Importing from the package
+import '@adyen/adyen-web/styles/adyen.css'; // Import Adyen styles
 import { useCart } from '../context/CartContext';
-import { loadStripe } from '@stripe/stripe-js';
+import {
+  globalConfiguration,
+  dropinConfiguration,
+} from '../config/adyenPaymentConfig';
 
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_API_PK);
+import SuccessPage from './SuccessPage';
+interface AdyenPaymentConfig {
+  id: string;
+  sessionData: string;
+  value: number;
+  currency: string;
+}
 
-const checkoutPage = () => {
+const CheckoutPage = () => {
+  const [paymentCompleted, setPaymentCompleted] = useState(false);
   const { cart } = useCart();
+  const dropinContainerRef = useRef<HTMLDivElement>(null);
+  const currency_ = 'EUR';
+  const [isLoading, setIsLoading] = useState(true);
+  const [checkoutConfig, setCheckoutConfig] =
+    useState<AdyenPaymentConfig | null>(null);
 
-  const handleCheckout = async () => {
-    const response = await fetch(
-      'http://localhost:3001/api/create-checkout-session',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          cartItems: cart,
-        }),
+  // First useEffect to fetch the configuration
+  useEffect(() => {
+    let isSubscribed = true;
+
+    const totalPrice = cart.reduce((total, product) => {
+      const price = Number(product.price) * product.quantity;
+      if (isNaN(price)) {
+        console.warn(`Invalid price for product: ${product.price}`);
+        return total;
       }
-    );
+      return total + price;
+    }, 0);
 
-    const session = await response.json();
+    const fetchCheckoutConfig = async () => {
+      try {
+        const checkoutResponse = await fetch(
+          'http://localhost:3001/api/adyen-checkout/initiatePayment',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            referrerPolicy: 'strict-origin-when-cross-origin',
+            body: JSON.stringify({
+              value: totalPrice,
+              currency: currency_,
+            }),
+          }
+        );
 
-    // Redirect to Stripe Checkout
-    const stripe = await stripePromise;
-    const result = await stripe?.redirectToCheckout({
-      sessionId: session.id,
-    });
+        if (!isSubscribed) return;
 
-    if (result?.error) {
-      console.error(result.error.message);
-    }
-  };
+        const responseData: AdyenPaymentConfig = await checkoutResponse.json();
+        setCheckoutConfig(responseData);
+      } catch (error) {
+        if (isSubscribed) {
+          console.error('Failed to fetch checkout configuration', error);
+        }
+      }
+    };
+
+    fetchCheckoutConfig();
+
+    return () => {
+      isSubscribed = false;
+    };
+  }, [cart]);
+
+  // Second useEffect to init Adyen checkout once we have both the config
+  useEffect(() => {
+    let isSubscribed = true;
+
+    const initializeDropin = async () => {
+      if (!checkoutConfig || !dropinContainerRef.current) {
+        return;
+      }
+
+      try {
+        setIsLoading(true);
+        const { id, sessionData, value, currency } = checkoutConfig;
+        const configParams = {
+          id,
+          sessionData,
+          value,
+          currency,
+          setCompleted: setPaymentCompleted,
+        };
+
+        const checkoutInstance = await AdyenCheckout(
+          globalConfiguration(configParams)
+        );
+
+        if (dropinContainerRef.current && isSubscribed) {
+          const dropin = new Dropin(checkoutInstance, dropinConfiguration);
+          dropin.mount(dropinContainerRef.current);
+        }
+      } catch (error) {
+        if (isSubscribed) {
+          console.error('Failed to initialize AdyenCheckout', error);
+        }
+      } finally {
+        if (isSubscribed) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    initializeDropin();
+
+    return () => {
+      isSubscribed = false;
+    };
+  }, [checkoutConfig]);
 
   return (
-    <>
-      <div className="checkout-page container mx-auto p-4">
-        <h1 className="text-3xl font-bold mb-4">Checkout</h1>
-
-        <h2 className="text-xl font-semibold">Order Summary</h2>
-        {cart.map((item) => (
-          <div key={item.id} className="flex justify-between items-center mb-2">
-            <span>
-              {item.title} x {item.quantity}
-            </span>
-            <span>${(item.price * item.quantity).toFixed(2)}</span>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 py-8">
+      {paymentCompleted && !isLoading ? (
+        <SuccessPage />
+      ) : (
+        <div className="max-w-2xl w-full bg-white p-6 rounded-lg shadow-md">
+          <h1 className="text-3xl font-semibold text-center text-gray-800 mb-6">
+            Checkout
+          </h1>
+          <div className="mb-4">
+            <h2 className="text-xl font-medium text-gray-700">Order Summary</h2>
+            <div className="space-y-4 mt-4">
+              {cart.map((item) => (
+                <div
+                  key={item.id}
+                  className="flex justify-between items-center border-b pb-2 mb-2"
+                >
+                  <span className="text-lg text-gray-800">
+                    {item.title} x {item.quantity}
+                  </span>
+                  <span className="text-lg text-gray-600">
+                    ${(item.price * item.quantity).toFixed(2)}
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
-        ))}
+          <div className="mb-6">
+            <h2 className="text-lg font-medium text-gray-700">Total:</h2>
+            <div className="flex justify-between items-center mt-2">
+              <span className="text-xl font-semibold text-gray-800">
+                Total Price
+              </span>
+              <span className="text-xl font-semibold text-gray-800">
+                $
+                {cart
+                  .reduce(
+                    (total, product) =>
+                      total + Number(product.price) * product.quantity,
+                    0
+                  )
+                  .toFixed(2)}
+              </span>
+            </div>
+          </div>
 
-        <button
-          onClick={handleCheckout}
-          className="bg-green-500 text-white py-2 px-6 rounded hover:bg-green-600 mt-4"
-        >
-          Proceed to Payment
-        </button>
-      </div>
-    </>
+          {/* Drop-in container */}
+          <div className="mb-6" ref={dropinContainerRef}></div>
+        </div>
+      )}
+    </div>
   );
 };
 
-export default checkoutPage;
+export default CheckoutPage;

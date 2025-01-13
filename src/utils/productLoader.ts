@@ -1,8 +1,12 @@
+interface Params {
+  id: string;
+}
+
 // This loader fetches product data from the API
-export const productLoader = async ({ params }: any) => {
+export const productLoader = async ({ params }: { params: Params }) => {
   const response = await fetch(
-    `https://fakestoreapi.com/products/${params.id}`
+    `http://localhost:3001/api/products/${params.id}`
   );
   const data = await response.json();
-  return { product: data };
+  return data;
 };

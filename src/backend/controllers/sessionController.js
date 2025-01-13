@@ -7,7 +7,6 @@ const stripe = new Stripe(process.env.VITE_STRIPE_API_SK);
 const createCheckoutSession = async (req, res) => {
   try {
     const { cartItems } = req.body || {}; // Fallback if req.body is undefined
-    console.log('Cart items:', cartItems);
     if (!cartItems || cartItems.length === 0) {
       return res.status(400).json({ error: 'Cart is empty' });
     }

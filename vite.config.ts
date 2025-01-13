@@ -10,6 +10,7 @@ export default ({ mode }: { mode: string }) => {
     define: {
       STRIPE_PK: JSON.stringify(loadedEnv.VITE_STRIPE_API_PK),
       STRIPE_SK: JSON.stringify(loadedEnv.VITE_STRIPE_API_SK),
+      ADYEN_CLIENT_KEY: JSON.stringify(loadedEnv.VITE_CLIENT_KEY),
     },
     plugins: [react()],
     server: {

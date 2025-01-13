@@ -23,5 +23,5 @@
     "noUncheckedSideEffectImports": true,
     "composite": true
   },
-  "include": ["src", "*.d.ts"]
+  "include": ["src", "*.d.ts", "test"]
 }
