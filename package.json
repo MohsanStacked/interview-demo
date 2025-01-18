@@ -9,7 +9,8 @@
     "lint": "eslint 'src/**/*.{ts,tsx}'",
     "preview": "vite preview",
     "fix": "eslint 'src/**/*.{ts,tsx}' --fix",
-    "server": "node --watch --env-file=.env src/backend/server/server.js"
+    "server": "node --watch --env-file=.env src/backend/server/server.js",
+    "everything": "node --watch --env-file=.env src/backend/server/server.js && vite"
   },
   "dependencies": {
     "@adyen/adyen-web": "^6.5.1",

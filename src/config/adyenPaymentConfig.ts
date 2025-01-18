@@ -53,7 +53,6 @@ const globalConfiguration = ({
 const dropinConfiguration: DropinConfiguration = {
   paymentMethodComponents: [Card, PayPal, GooglePay],
   instantPaymentTypes: ['applepay', 'googlepay'],
-
   onReady: () => {
     console.log('Drop-in is ready');
   },
